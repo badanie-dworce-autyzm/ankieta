@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Ankieta: dworce kolejowe a osoby w spektrum autyzmu</title>
+<style>
+
+:root{
+  --tlo:#F5F4F0; --karta:#FFFFFF; --tekst:#1E2A30; --tekst2:#46555D; --linia:#C9CFD2;
+  --akcent:#2E5B70; --akcent-tlo:#E4EDF1; --uwaga-tlo:#FFF3C4; --uwaga:#6B4E00; --blad:#8A2D1F;
+  --r:10px;
+}
+*{box-sizing:border-box}
+html{font-size:100%;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--tlo);color:var(--tekst);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:1.125rem;line-height:1.55}
+*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+.wrap{max-width:40rem;margin:0 auto;padding:0 1rem}
+/* nagłówek */
+header.post{background:var(--karta);border-bottom:1px solid var(--linia)}
+header.post .wrap{padding-top:.75rem;padding-bottom:.75rem}
+.czesc{font-size:1rem;color:var(--tekst2);display:flex;justify-content:space-between;gap:1rem}
+.czesc strong{color:var(--tekst);font-weight:600}
+.pasek{height:10px;background:#E1E4E6;border-radius:5px;margin-top:.5rem;overflow:hidden}
+.pasek > div{height:100%;background:var(--akcent)}
+main{padding:1.25rem 0 7rem}
+h1{font-size:1.375rem;line-height:1.35;margin:0 0 .5rem;font-weight:650}
+h1:focus{outline:none}
+h2{font-size:1.125rem;margin:1.5rem 0 .25rem;font-weight:650}
+.nr{display:block;font-size:1rem;color:var(--tekst2);font-weight:500;margin-bottom:.25rem}
+.opis{color:var(--tekst2);margin:0 0 1rem}
+.wstep{background:var(--karta);border:1px solid var(--linia);border-radius:var(--r);padding:1rem;margin-bottom:1.25rem}
+.wstep p{margin:0}
+p{margin:.4rem 0}
+.do-uzup{background:var(--uwaga-tlo);color:var(--uwaga);padding:0 .25rem;border-radius:4px;font-weight:600}
+/* odpowiedzi */
+.odp{display:flex;flex-direction:column;gap:.5rem;margin:0;padding:0;border:0}
+.odp legend{padding:0}
+.opcja{display:flex;align-items:flex-start;gap:.75rem;min-height:52px;padding:.75rem .9rem;background:var(--karta);border:2px solid var(--linia);border-radius:var(--r);cursor:pointer}
+.opcja input{width:24px;height:24px;margin:.1rem 0 0;flex:0 0 auto;accent-color:var(--akcent)}
+.opcja:has(input:checked){border-color:var(--akcent);background:var(--akcent-tlo)}
+.opcja:has(input:focus-visible),.opcja:has(input[type=text]:focus){outline:3px solid var(--tekst);outline-offset:2px}
+.inne{margin:-.25rem 0 .25rem 2.6rem}
+.inne input{width:100%;font:inherit;padding:.6rem .7rem;min-height:48px;border:2px solid var(--linia);border-radius:8px;background:#fff;color:var(--tekst)}
+.inne input:focus{outline:3px solid var(--tekst);outline-offset:1px;border-color:var(--akcent)}
+/* oceny */
+.legenda{font-size:1rem;color:var(--tekst2);background:var(--karta);border-left:4px solid var(--akcent);padding:.5rem .75rem;margin:0 0 1rem;border-radius:0 6px 6px 0}
+.karta{background:var(--karta);border:1px solid var(--linia);border-radius:var(--r);padding:.9rem;margin:0 0 .9rem}
+.karta fieldset{border:0;margin:0;padding:0;min-width:0}
+.karta legend{font-weight:600;padding:0;margin-bottom:.6rem;display:block;width:100%}
+.karta legend .lit{display:inline-block;min-width:1.6rem;color:var(--tekst2)}
+.karta .gotowe{font-size:1rem;color:var(--akcent);font-weight:500;margin-left:.25rem}
+/* oceny: każda pozycja to karta z listą odpowiedzi */
+.skala{display:flex;flex-direction:column;gap:.4rem}
+.skala label{display:flex;align-items:center;gap:.7rem;min-height:48px;padding:.4rem .75rem;border:2px solid var(--linia);border-radius:8px;cursor:pointer}
+.skala input{width:22px;height:22px;margin:0;flex:0 0 auto;accent-color:var(--akcent)}
+.skala label:has(input:checked){border-color:var(--akcent);background:var(--akcent-tlo)}
+.skala label:has(input:focus-visible){outline:3px solid var(--tekst);outline-offset:2px}
+.skala .cyf{font-weight:700;min-width:1rem}
+/* listy rozwijane */
+.ranking label{display:block;font-weight:600;margin:1rem 0 .35rem}
+.ranking select{width:100%;font:inherit;min-height:52px;padding:.5rem .6rem;border:2px solid var(--linia);border-radius:8px;background:#fff;color:var(--tekst)}
+.ranking select:focus{outline:3px solid var(--tekst);outline-offset:1px;border-color:var(--akcent)}
+/* komunikat */
+.komunikat{margin:1rem 0 0;padding:.75rem .9rem;border-radius:8px;background:#FBE9E5;color:var(--blad);font-weight:600}
+.koniec{background:var(--karta);border:1px solid var(--linia);border-radius:var(--r);padding:1.5rem 1rem;text-align:center}
+.koniec h1{font-size:1.5rem}
+/* nawigacja – zawsze w tym samym miejscu */
+nav.nawig{position:fixed;left:0;right:0;bottom:0;background:var(--karta);border-top:1px solid var(--linia);padding:.75rem 0 calc(.75rem + env(safe-area-inset-bottom))}
+nav.nawig .wrap{display:flex;justify-content:space-between;gap:1rem}
+nav.nawig button{font:inherit;font-weight:600;min-height:52px;min-width:8.5rem;padding:.5rem 1.25rem;border-radius:var(--r);cursor:pointer}
+#wstecz{background:var(--karta);color:var(--akcent);border:2px solid var(--akcent)}
+#dalej{background:var(--akcent);color:#fff;border:2px solid var(--akcent)}
+nav.nawig button:focus-visible{outline:3px solid var(--tekst);outline-offset:3px}
+.ukryty{visibility:hidden}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* pola tekstowe */
+.pole label{display:block;font-weight:600;margin:0 0 .35rem}
+textarea{width:100%;min-height:8rem;font:inherit;padding:.6rem .7rem;border:2px solid var(--linia);border-radius:8px;background:#fff;color:var(--tekst);resize:vertical}
+textarea:focus{outline:3px solid var(--tekst);outline-offset:1px;border-color:var(--akcent)}
+.licznik{font-size:1rem;color:var(--tekst2);text-align:right;margin-top:.25rem}
+/* komunikaty łagodne (informacja, nie błąd) */
+.info{margin:1rem 0 0;padding:.75rem .9rem;border-radius:8px;background:var(--akcent-tlo);color:var(--tekst);border-left:4px solid var(--akcent)}
+.uwaga{margin:1rem 0 0;padding:.75rem .9rem;border-radius:8px;background:var(--uwaga-tlo);color:var(--uwaga)}
+.pilot{background:var(--uwaga-tlo);color:var(--uwaga);font-weight:600;font-size:1rem;text-align:center;padding:.35rem}
+.przyciski{display:flex;flex-direction:column;gap:.75rem;margin-top:1.25rem}
+.przyciski button,.btn{font:inherit;font-weight:600;min-height:52px;padding:.5rem 1.25rem;border-radius:var(--r);cursor:pointer;border:2px solid var(--akcent)}
+.btn-glowny{background:var(--akcent);color:#fff}
+.btn-drugi{background:var(--karta);color:var(--akcent)}
+.przyciski button:focus-visible,.btn:focus-visible{outline:3px solid var(--tekst);outline-offset:3px}
+.wiersz{width:100%;border-collapse:collapse;font-size:1rem;margin-top:1rem;background:#fff}
+.wiersz td,.wiersz th{border:1px solid var(--linia);padding:.25rem .5rem;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+.hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+button[disabled]{opacity:.6;cursor:default}
+
+</style>
+</head>
+<body>
+<div class="pilot" id="pilot" hidden>Pilotaż ankiety</div>
+<header class="post">
+  <div class="wrap">
+    <div class="czesc"><strong id="czescNr"></strong><span id="czescTytul"></span></div>
+    <div class="pasek" role="progressbar" aria-label="Postęp ankiety" aria-valuemin="0" aria-valuemax="100" id="pasek"><div id="pasekW"></div></div>
+  </div>
+</header>
+<main><div class="wrap" id="ekran"></div></main>
+<div class="hp" aria-hidden="true"><label for="hp_www">Nie wypełniaj tego pola</label><input type="text" id="hp_www" name="strona_www" tabindex="-1" autocomplete="off"></div>
+<nav class="nawig" aria-label="Przejście między pytaniami">
+  <div class="wrap">
+    <button type="button" id="wstecz">Wstecz</button>
+    <button type="button" id="dalej">Dalej</button>
+  </div>
+</nav>
+<noscript><p style="padding:1rem">Ankieta wymaga włączonej obsługi JavaScript w przeglądarce.</p></noscript>
+<script>
+// ↓↓↓ Adres aplikacji internetowej z Google Apps Script. Pusty = tryb testowy. ↓↓↓
+const SKRYPT_URL = "https://script.google.com/macros/s/AKfycbz8mFVfTeilmKugBABKCLUShOOgUT_3QVhEvqbwKpUq9mhyVUkmifzv4FUssHUzngg9PA/exec";
+// ↑↑↑ ------------------------------------------------------------------------ ↑↑↑
+const D = {"parts":[{"no":1,"title":{"A":"Część 1. Podróże koleją","B":"Część 1. Podróże koleją"},"intro":{"A":null,"B":null},"questions":[1,2,3,4,5]},{"no":2,"title":{"A":"Część 2. Co przeszkadza na dworcu","B":"Część 2. Co przeszkadza na dworcu"},"intro":{"A":"W tej części zobaczysz listy rzeczy, które mogą przeszkadzać na dworcu. Przy każdej rzeczy zaznacz, jak bardzo przeszkadza właśnie Tobie. Jeśli czegoś nie znasz albo Cię to nie dotyczy, wybierz „nie wiem / nie dotyczy”.","B":"W tej części zobaczysz listy rzeczy, które mogą przeszkadzać na dworcu. Przy każdej rzeczy zaznacz, jak bardzo przeszkadza osobie, którą wspierasz. Jeśli tego nie wiesz albo to jej nie dotyczy, wybierz „nie wiem / nie dotyczy”."},"questions":[6,7,8,9,10,11]},{"no":3,"title":{"A":"Część 3. Sposoby radzenia sobie i pomoc","B":"Część 3. Sposoby radzenia sobie i pomoc"},"intro":{"A":null,"B":null},"questions":[12,13,14]},{"no":4,"title":{"A":"Część 4. Co mogłoby pomóc","B":"Część 4. Co mogłoby pomóc"},"intro":{"A":null,"B":null},"questions":[15,16]},{"no":5,"title":{"A":"Część 5. Stacja Warszawa Zachodnia","B":"Część 5. Stacja Warszawa Zachodnia"},"intro":{"A":null,"B":null},"questions":[17,18]},{"no":6,"title":{"A":"Część 6. Twoje uwagi","B":"Część 6. Twoje uwagi"},"intro":{"A":"Pytania w tej części nie są obowiązkowe. Nie wpisuj imion ani nazwisk.","B":"Pytania w tej części nie są obowiązkowe. Nie wpisuj imion ani nazwisk."},"questions":[19,20,21]},{"no":7,"title":{"A":"Część 7. Informacje o Tobie","B":"Część 7. Informacje o Tobie i osobie, którą wspierasz"},"intro":{"A":null,"B":null},"questions":[22,23,24,25,26]}],"questions":{"1":{"n":1,"part":1,"text":{"A":"Jak często jesteś na dworcu lub stacji kolejowej?","B":"Jak często osoba, którą wspierasz, jest na dworcu lub stacji kolejowej?"},"note":{"A":"Zaznacz jedną odpowiedź.","B":"Zaznacz jedną odpowiedź."},"optional":false,"only":null,"type":"single","options":{"A":[{"label":"Kilka razy w tygodniu","other":false},{"label":"Kilka razy w miesiącu","other":false},{"label":"Kilka razy w roku","other":false},{"label":"Rzadziej niż raz w roku","other":false},{"label":"Wcale nie korzystam z kolei","other":false}],"B":[{"label":"Kilka razy w tygodniu","other":false},{"label":"Kilka razy w miesiącu","other":false},{"label":"Kilka razy w roku","other":false},{"label":"Rzadziej niż raz w roku","other":false},{"label":"Wcale nie korzysta z kolei","other":false}]}},"2":{"n":2,"part":1,"text":{"A":"Z kim najczęściej podróżujesz koleją?","B":"Z kim ta osoba najczęściej podróżuje koleją?"},"note":{"A":"Zaznacz jedną odpowiedź.","B":"Zaznacz jedną odpowiedź."},"optional":false,"only":null,"type":"single","options":{"A":[{"label":"Sam / sama","other":false},{"label":"Z członkiem rodziny","other":false},{"label":"Z opiekunem lub asystentem","other":false},{"label":"Z inną osobą","other":false},{"label":"Nie podróżuję koleją","other":false}],"B":[{"label":"Sama, bez osoby towarzyszącej","other":false},{"label":"Ze mną","other":false},{"label":"Z innym członkiem rodziny","other":false},{"label":"Z opiekunem lub asystentem","other":false},{"label":"Nie podróżuje koleją","other":false}]}},"3":{"n":3,"part":1,"text":{"A":"O jakich porach najczęściej jesteś na dworcu?","B":"O jakich porach ta osoba najczęściej jest na dworcu?"},"note":{"A":"Możesz zaznaczyć więcej niż jedną odpowiedź.","B":"Możesz zaznaczyć więcej niż jedną odpowiedź."},"optional":false,"only":null,"type":"multi","options":{"A":[{"label":"Rano, w godzinach szczytu (około 6:00–9:00)","other":false},{"label":"W ciągu dnia (około 9:00–15:00)","other":false},{"label":"Po południu, w godzinach szczytu (około 15:00–18:00)","other":false},{"label":"Wieczorem (po 18:00)","other":false},{"label":"W weekendy","other":false},{"label":"Różnie, nie ma reguły","other":false},{"label":"Nie dotyczy","other":false,"excl":true}],"B":[{"label":"Rano, w godzinach szczytu (około 6:00–9:00)","other":false},{"label":"W ciągu dnia (około 9:00–15:00)","other":false},{"label":"Po południu, w godzinach szczytu (około 15:00–18:00)","other":false},{"label":"Wieczorem (po 18:00)","other":false},{"label":"W weekendy","other":false},{"label":"Różnie, nie ma reguły","other":false},{"label":"Nie dotyczy","other":false,"excl":true}]}},"4":{"n":4,"part":1,"text":{"A":"Czy zdarza się, że rezygnujesz z podróży koleją albo wybierasz inny środek transportu z powodu trudności na dworcu?","B":"Czy zdarza się, że ta osoba (lub Wy razem) rezygnuje z podróży koleją albo wybiera inny środek transportu z powodu trudności na dworcu?"},"note":{"A":"Zaznacz jedną odpowiedź.","B":"Zaznacz jedną odpowiedź."},"optional":false,"only":null,"type":"single","options":{"A":[{"label":"Nigdy","other":false},{"label":"Rzadko","other":false},{"label":"Czasami","other":false},{"label":"Często","other":false},{"label":"Bardzo często","other":false},{"label":"Nie wiem","other":false}],"B":[{"label":"Nigdy","other":false},{"label":"Rzadko","other":false},{"label":"Czasami","other":false},{"label":"Często","other":false},{"label":"Bardzo często","other":false},{"label":"Nie wiem","other":false}]}},"5":{"n":5,"part":1,"text":{"A":"Jakie są powody tej rezygnacji?","B":"Jakie są powody tej rezygnacji?"},"note":{"A":"Możesz zaznaczyć więcej niż jedną odpowiedź.","B":"Możesz zaznaczyć więcej niż jedną odpowiedź."},"optional":false,"only":null,"type":"multi","options":{"A":[{"label":"Hałas","other":false},{"label":"Tłok","other":false},{"label":"Trudność w znalezieniu drogi","other":false},{"label":"Niepewność: zmiany peronu, opóźnienia, odwołania","other":false},{"label":"Kontakt z obcymi ludźmi","other":false},{"label":"Zmęczenie po pobycie na dworcu","other":false},{"label":"Brak osoby, która mogłaby mi towarzyszyć","other":false},{"label":"Inny powód (jaki?)","other":true}],"B":[{"label":"Hałas","other":false},{"label":"Tłok","other":false},{"label":"Trudność w znalezieniu drogi","other":false},{"label":"Niepewność: zmiany peronu, opóźnienia, odwołania","other":false},{"label":"Kontakt z obcymi ludźmi","other":false},{"label":"Zmęczenie po pobycie na dworcu","other":false},{"label":"Brak osoby, która mogłaby jej towarzyszyć","other":false},{"label":"Inny powód (jaki?)","other":true}]}},"6":{"n":6,"part":2,"text":{"A":"Dźwięki, światło i inne bodźce. Jak bardzo przeszkadzają Ci te rzeczy na dworcu?","B":"Dźwięki, światło i inne bodźce. Jak bardzo przeszkadzają tej osobie te rzeczy na dworcu?"},"note":{"A":"Przy każdej pozycji wybierz jedną odpowiedź.","B":"Przy każdej pozycji wybierz jedną odpowiedź."},"optional":false,"only":null,"type":"matrix","rows":[{"label":"Głośne komunikaty z głośników"},{"label":"Hałas pociągów (wjazd, hamowanie, odjazd)"},{"label":"Nagłe dźwięki (sygnały, gwizdki, alarmy)"},{"label":"Gwar rozmów wielu osób"},{"label":"Echo (pogłos) w hali lub w przejściu podziemnym"},{"label":"Zbyt jasne światło"},{"label":"Migające lub mrugające światło"},{"label":"Intensywne zapachy (jedzenie, środki czystości, dym)"}],"scale":{"legend":{"A":"Skala: 1 = nie przeszkadza, 2 = przeszkadza trochę, 3 = przeszkadza średnio, 4 = przeszkadza bardzo, 5 = przeszkadza bardzo mocno.","B":"Skala: 1 = nie przeszkadza, 2 = przeszkadza trochę, 3 = przeszkadza średnio, 4 = przeszkadza bardzo, 5 = przeszkadza bardzo mocno."},"heads":[["1","nie"],["2","trochę"],["3","średnio"],["4","bardzo"],["5","bardzo mocno"],["nie wiem /","nie dotyczy"]]}},"7":{"n":7,"part":2,"text":{"A":"Informacja. Jak bardzo przeszkadzają Ci te rzeczy na dworcu?","B":"Informacja. Jak bardzo przeszkadzają tej osobie te rzeczy na dworcu?"},"note":{"A":"Przy każdej pozycji wybierz jedną odpowiedź.","B":"Przy każdej pozycji wybierz jedną odpowiedź."},"optional":false,"only":null,"type":"matrix","rows":[{"label":"Niewyraźne komunikaty głosowe"},{"label":"Niejasne tablice kierunkowe (strzałki, oznaczenia)"},{"label":"Zbyt dużo informacji w jednym miejscu (tablice, ekrany, reklamy)"},{"label":"Trudność w znalezieniu numeru peronu"},{"label":"Nagła zmiana peronu"},{"label":"Opóźnienie lub odwołanie pociągu"},{"label":"Informacja o zmianach podana za późno"},{"label":"Trudność w poproszeniu pracownika o pomoc"}],"scale":{"legend":{"A":"Skala: 1 = nie przeszkadza, 2 = przeszkadza trochę, 3 = przeszkadza średnio, 4 = przeszkadza bardzo, 5 = przeszkadza bardzo mocno.","B":"Skala: 1 = nie przeszkadza, 2 = przeszkadza trochę, 3 = przeszkadza średnio, 4 = przeszkadza bardzo, 5 = przeszkadza bardzo mocno."},"heads":[["1","nie"],["2","trochę"],["3","średnio"],["4","bardzo"],["5","bardzo mocno"],["nie wiem /","nie dotyczy"]]}},"8":{"n":8,"part":2,"text":{"A":"Przestrzeń i ruch. Jak bardzo przeszkadzają Ci te rzeczy na dworcu?","B":"Przestrzeń i ruch. Jak bardzo przeszkadzają tej osobie te rzeczy na dworcu?"},"note":{"A":"Przy każdej pozycji wybierz jedną odpowiedź.","B":"Przy każdej pozycji wybierz jedną odpowiedź."},"optional":false,"only":null,"type":"matrix","rows":[{"label":"Trudność w znalezieniu drogi na peron"},{"label":"Długa droga od wejścia na peron"},{"label":"Wąskie przejścia"},{"label":"Tłok w przejściu podziemnym lub w tunelu"},{"label":"Tłok na peronie"},{"label":"Schody ruchome"},{"label":"Brak spokojnego miejsca, w którym można odpocząć z dala od tłumu"},{"label":"Nagła zmiana otoczenia, np. z jasnej hali do ciemnego tunelu albo z cichego miejsca na głośny peron"}],"scale":{"legend":{"A":"Skala: 1 = nie przeszkadza, 2 = przeszkadza trochę, 3 = przeszkadza średnio, 4 = przeszkadza bardzo, 5 = przeszkadza bardzo mocno.","B":"Skala: 1 = nie przeszkadza, 2 = przeszkadza trochę, 3 = przeszkadza średnio, 4 = przeszkadza bardzo, 5 = przeszkadza bardzo mocno."},"heads":[["1","nie"],["2","trochę"],["3","średnio"],["4","bardzo"],["5","bardzo mocno"],["nie wiem /","nie dotyczy"]]}},"9":{"n":9,"part":2,"text":{"A":"Jak często na dworcu czujesz, że bodźców jest za dużo (przeciążenie sensoryczne)?","B":"Jak często na dworcu ta osoba odczuwa, że bodźców jest za dużo (przeciążenie sensoryczne)?"},"note":{"A":"Zaznacz jedną odpowiedź.","B":"Zaznacz jedną odpowiedź."},"optional":false,"only":null,"type":"single","options":{"A":[{"label":"Nigdy","other":false},{"label":"Rzadko","other":false},{"label":"Czasami","other":false},{"label":"Często","other":false},{"label":"Bardzo często","other":false},{"label":"Nie wiem","other":false}],"B":[{"label":"Nigdy","other":false},{"label":"Rzadko","other":false},{"label":"Czasami","other":false},{"label":"Często","other":false},{"label":"Bardzo często","other":false},{"label":"Nie wiem","other":false}]}},"10":{"n":10,"part":2,"text":{"A":"Jak często trudności na dworcu sprawiły, że musiałeś / musiałaś przerwać lub odwołać podróż?","B":"Jak często trudności na dworcu sprawiły, że ta osoba (lub Wy razem) musiała przerwać lub odwołać podróż?"},"note":{"A":"Zaznacz jedną odpowiedź.","B":"Zaznacz jedną odpowiedź."},"optional":false,"only":null,"type":"single","options":{"A":[{"label":"Nigdy","other":false},{"label":"Rzadko","other":false},{"label":"Czasami","other":false},{"label":"Często","other":false},{"label":"Bardzo często","other":false},{"label":"Nie wiem","other":false}],"B":[{"label":"Nigdy","other":false},{"label":"Rzadko","other":false},{"label":"Czasami","other":false},{"label":"Często","other":false},{"label":"Bardzo często","other":false},{"label":"Nie wiem","other":false}]}},"11":{"n":11,"part":2,"text":{"A":"W którym miejscu dworca jest Ci najtrudniej?","B":"W którym miejscu dworca jest tej osobie najtrudniej?"},"note":{"A":"Zaznacz najwyżej 2 odpowiedzi.","B":"Zaznacz najwyżej 2 odpowiedzi."},"optional":false,"only":null,"type":"multi","max":2,"options":{"A":[{"label":"Wejście do budynku dworca","other":false},{"label":"Hala dworca (kasy, poczekalnia)","other":false},{"label":"Przejście podziemne lub tunel","other":false},{"label":"Schody, schody ruchome lub winda","other":false},{"label":"Peron (oczekiwanie na pociąg)","other":false},{"label":"Wsiadanie do pociągu","other":false},{"label":"Trudno powiedzieć","other":false,"excl":true}],"B":[{"label":"Wejście do budynku dworca","other":false},{"label":"Hala dworca (kasy, poczekalnia)","other":false},{"label":"Przejście podziemne lub tunel","other":false},{"label":"Schody, schody ruchome lub winda","other":false},{"label":"Peron (oczekiwanie na pociąg)","other":false},{"label":"Wsiadanie do pociągu","other":false},{"label":"Trudno powiedzieć","other":false,"excl":true}]}},"12":{"n":12,"part":3,"text":{"A":"Co robisz albo czego używasz, żeby pobyt na dworcu był łatwiejszy?","B":"Co ta osoba (lub Wy razem) robi albo czego używa, żeby pobyt na dworcu był łatwiejszy?"},"note":{"A":"Możesz zaznaczyć więcej niż jedną odpowiedź.","B":"Możesz zaznaczyć więcej niż jedną odpowiedź."},"optional":false,"only":null,"type":"multi","options":{"A":[{"label":"Słuchawki wygłuszające lub zatyczki do uszu","other":false},{"label":"Muzyka w słuchawkach","other":false},{"label":"Okulary przeciwsłoneczne lub czapka z daszkiem","other":false},{"label":"Podróż poza godzinami szczytu","other":false},{"label":"Przyjazd na dworzec dużo wcześniej","other":false},{"label":"Sprawdzenie trasy przed podróżą (zdjęcia, mapy, filmy)","other":false},{"label":"Aplikacja z rozkładem jazdy","other":false},{"label":"Przedmiot, który uspokaja","other":false},{"label":"Podróż z drugą osobą","other":false},{"label":"Smycz ze słonecznikiem (oznaczenie niewidocznej niepełnosprawności)","other":false},{"label":"Nic z tych rzeczy","other":false,"excl":true},{"label":"Coś innego (co?)","other":true}],"B":[{"label":"Słuchawki wygłuszające lub zatyczki do uszu","other":false},{"label":"Muzyka w słuchawkach","other":false},{"label":"Okulary przeciwsłoneczne lub czapka z daszkiem","other":false},{"label":"Podróż poza godzinami szczytu","other":false},{"label":"Przyjazd na dworzec dużo wcześniej","other":false},{"label":"Sprawdzenie trasy przed podróżą (zdjęcia, mapy, filmy)","other":false},{"label":"Aplikacja z rozkładem jazdy","other":false},{"label":"Przedmiot, który uspokaja","other":false},{"label":"Podróż z drugą osobą","other":false},{"label":"Smycz ze słonecznikiem (oznaczenie niewidocznej niepełnosprawności)","other":false},{"label":"Nic z tych rzeczy","other":false,"excl":true},{"label":"Coś innego (co?)","other":true}]}},"13":{"n":13,"part":3,"text":{"A":"Czy wiesz, że przewoźnicy i zarządcy dworców oferują bezpłatną pomoc (asystę) dla podróżnych z niepełnosprawnościami?","B":"Czy wiesz, że przewoźnicy i zarządcy dworców oferują bezpłatną pomoc (asystę) dla podróżnych z niepełnosprawnościami?"},"note":{"A":"Zaznacz jedną odpowiedź.","B":"Zaznacz jedną odpowiedź."},"optional":false,"only":null,"type":"single","options":{"A":[{"label":"Tak, i korzystałem / korzystałam z niej","other":false},{"label":"Tak, ale nie korzystałem / nie korzystałam","other":false},{"label":"Nie wiedziałem / nie wiedziałam","other":false}],"B":[{"label":"Tak, i korzystaliśmy z niej","other":false},{"label":"Tak, ale nie korzystaliśmy","other":false},{"label":"Nie wiedziałem / nie wiedziałam","other":false}]}},"14":{"n":14,"part":3,"text":{"A":"W jaki sposób najłatwiej jest Ci poprosić o pomoc na dworcu?","B":"W jaki sposób tej osobie najłatwiej jest poprosić o pomoc na dworcu?"},"note":{"A":"Możesz zaznaczyć więcej niż jedną odpowiedź.","B":"Możesz zaznaczyć więcej niż jedną odpowiedź."},"optional":false,"only":null,"type":"multi","options":{"A":[{"label":"Rozmowa z pracownikiem twarzą w twarz","other":false},{"label":"Pokazanie kartki lub karty z prośbą","other":false},{"label":"Wiadomość tekstowa lub czat","other":false},{"label":"Rozmowa telefoniczna","other":false},{"label":"Przycisk lub punkt pomocy na dworcu","other":false},{"label":"Zgłoszenie potrzeb przez internet przed podróżą","other":false},{"label":"Nie proszę o pomoc","other":false,"excl":true}],"B":[{"label":"Rozmowa z pracownikiem twarzą w twarz","other":false},{"label":"Pokazanie kartki lub karty z prośbą","other":false},{"label":"Wiadomość tekstowa lub czat","other":false},{"label":"Rozmowa telefoniczna","other":false},{"label":"Przycisk lub punkt pomocy na dworcu","other":false},{"label":"Zgłoszenie potrzeb przez internet przed podróżą","other":false},{"label":"Nie prosi o pomoc","other":false,"excl":true}]}},"15":{"n":15,"part":4,"text":{"A":"Jak bardzo pomogłyby Ci te rozwiązania na dworcu?","B":"Jak bardzo pomogłyby tej osobie te rozwiązania na dworcu?"},"note":{"A":"Przy każdej pozycji wybierz jedną odpowiedź. Rozwiązania są ułożone alfabetycznie.","B":"Przy każdej pozycji wybierz jedną odpowiedź. Rozwiązania są ułożone alfabetycznie."},"optional":false,"only":null,"type":"matrix","rows":[{"letter":"a","label":"Aplikacja z planem dworca i informacją o zmianach na bieżąco"},{"letter":"b","label":"Ciche pomieszczenie (pokój wyciszenia)"},{"letter":"c","label":"Cichsza, oznakowana trasa na peron"},{"letter":"d","label":"Filmy i zdjęcia dworca dostępne przed podróżą"},{"letter":"e","label":"Informacja, o jakich porach na dworcu jest mniej ludzi"},{"letter":"f","label":"Informacje napisane prostym językiem"},{"letter":"g","label":"Łagodniejsze, równomierne oświetlenie bez migania"},{"letter":"h","label":"Mapa dworca z zaznaczonymi głośnymi i cichymi miejscami"},{"letter":"i","label":"Miejsca do siedzenia z dala od tłumu"},{"letter":"j","label":"Piktogramy (proste rysunki) na tablicach"},{"letter":"k","label":"Pracownicy przeszkoleni w zakresie autyzmu"},{"letter":"l","label":"Strefa spokojnego oczekiwania w hali lub na peronie"},{"letter":"m","label":"Wyraźniejsze i cichsze komunikaty głosowe"}],"scale":{"legend":{"A":"Skala: 1 = nie pomogłoby, 2 = pomogłoby trochę, 3 = pomogłoby średnio, 4 = pomogłoby bardzo, 5 = pomogłoby bardzo mocno.","B":"Skala: 1 = nie pomogłoby, 2 = pomogłoby trochę, 3 = pomogłoby średnio, 4 = pomogłoby bardzo, 5 = pomogłoby bardzo mocno."},"heads":[["1","nie"],["2","trochę"],["3","średnio"],["4","bardzo"],["5","bardzo mocno"],["nie wiem"]]}},"16":{"n":16,"part":4,"text":{"A":"Które 3 rozwiązania z pytania 15 są dla Ciebie najważniejsze?","B":"Które 3 rozwiązania z pytania 15 są dla tej osoby najważniejsze?"},"note":{"A":"Wybierz z listy. Nie wybieraj dwa razy tego samego.","B":"Wybierz z listy. Nie wybieraj dwa razy tego samego."},"optional":false,"only":null,"type":"ranking","slots":["Najważniejsze","Drugie","Trzecie"],"from":15},"17":{"n":17,"part":5,"text":{"A":"Czy w ciągu ostatnich 2 lat korzystałeś / korzystałaś ze stacji Warszawa Zachodnia?","B":"Czy w ciągu ostatnich 2 lat ta osoba korzystała ze stacji Warszawa Zachodnia?"},"note":{"A":"Zaznacz jedną odpowiedź.","B":"Zaznacz jedną odpowiedź."},"optional":false,"only":null,"type":"single","options":{"A":[{"label":"Tak","other":false},{"label":"Nie","other":false},{"label":"Nie pamiętam","other":false}],"B":[{"label":"Tak","other":false},{"label":"Nie","other":false},{"label":"Nie pamiętam","other":false}]}},"18":{"n":18,"part":5,"text":{"A":"Jeśli tak: co na stacji Warszawa Zachodnia było dla Ciebie trudne?","B":"Jeśli tak: co na stacji Warszawa Zachodnia było dla tej osoby trudne?"},"note":{"A":"Napisz, w którym miejscu to było, jeśli pamiętasz.","B":"Napisz, w którym miejscu to było, jeśli pamiętasz."},"optional":true,"only":null,"type":"text"},"19":{"n":19,"part":6,"text":{"A":"Co najbardziej ułatwiłoby Ci korzystanie z dworców kolejowych?","B":"Co najbardziej ułatwiłoby tej osobie korzystanie z dworców kolejowych?"},"note":{"A":null,"B":null},"optional":true,"only":null,"type":"text"},"20":{"n":20,"part":6,"text":{"A":"Jeśli chcesz, opisz jedną sytuację na dworcu, która była dla Ciebie trudna.","B":"Jeśli chcesz, opisz jedną sytuację na dworcu, która była trudna dla tej osoby."},"note":{"A":"Nie musisz odpowiadać na to pytanie.","B":"Nie musisz odpowiadać na to pytanie."},"optional":true,"only":null,"type":"text"},"21":{"n":21,"part":6,"text":{"A":"Czy chcesz dodać coś jeszcze?","B":"Czy chcesz dodać coś jeszcze?"},"note":{"A":null,"B":null},"optional":true,"only":null,"type":"text"},"22":{"n":22,"part":7,"text":{"A":"Ile masz lat?","B":"Ile lat ma osoba, którą wspierasz?"},"note":{"A":"Zaznacz jedną odpowiedź.","B":"Zaznacz jedną odpowiedź."},"optional":false,"only":null,"type":"single","options":{"A":[{"label":"18–25 lat","other":false},{"label":"26–35 lat","other":false},{"label":"36–50 lat","other":false},{"label":"51–65 lat","other":false},{"label":"Więcej niż 65 lat","other":false},{"label":"Wolę nie podawać","other":false}],"B":[{"label":"Mniej niż 7 lat","other":false},{"label":"7–12 lat","other":false},{"label":"13–17 lat","other":false},{"label":"18–25 lat","other":false},{"label":"26–35 lat","other":false},{"label":"Więcej niż 35 lat","other":false},{"label":"Wolę nie podawać","other":false}]}},"23":{"n":23,"part":7,"text":{"A":"Która odpowiedź najlepiej Cię opisuje?","B":"Która odpowiedź najlepiej opisuje tę osobę?"},"note":{"A":"Zaznacz jedną odpowiedź.","B":"Zaznacz jedną odpowiedź."},"optional":false,"only":null,"type":"single","options":{"A":[{"label":"Mam diagnozę spektrum autyzmu od specjalisty","other":false},{"label":"Jestem w trakcie diagnozy","other":false},{"label":"Uważam, że jestem w spektrum autyzmu, ale nie mam diagnozy","other":false},{"label":"Wolę nie odpowiadać","other":false}],"B":[{"label":"Ma diagnozę spektrum autyzmu od specjalisty","other":false},{"label":"Jest w trakcie diagnozy","other":false},{"label":"Nie ma diagnozy, ale uważamy, że jest w spektrum autyzmu","other":false},{"label":"Wolę nie odpowiadać","other":false}]}},"24":{"n":24,"part":7,"text":{"A":"Gdzie mieszkasz?","B":"Gdzie mieszka ta osoba?"},"note":{"A":"Zaznacz jedną odpowiedź.","B":"Zaznacz jedną odpowiedź."},"optional":false,"only":null,"type":"single","options":{"A":[{"label":"Warszawa lub okolice Warszawy","other":false},{"label":"Inne duże miasto (ponad 100 tys. mieszkańców)","other":false},{"label":"Mniejsze miasto","other":false},{"label":"Wieś","other":false},{"label":"Wolę nie podawać","other":false}],"B":[{"label":"Warszawa lub okolice Warszawy","other":false},{"label":"Inne duże miasto (ponad 100 tys. mieszkańców)","other":false},{"label":"Mniejsze miasto","other":false},{"label":"Wieś","other":false},{"label":"Wolę nie podawać","other":false}]}},"25":{"n":25,"part":7,"text":{"A":"Czy ktoś pomagał Ci wypełnić tę ankietę?","B":"Kim jesteś dla osoby, którą wspierasz?"},"note":{"A":"Możesz zaznaczyć więcej niż jedną odpowiedź.","B":"Zaznacz jedną odpowiedź."},"optional":false,"only":null,"type":{"A":"multi","B":"single"},"options":{"A":[{"label":"Nie, wypełniłem / wypełniłam ją sam / sama","other":false,"excl":true},{"label":"Tak, ktoś zapisywał moje odpowiedzi","other":false},{"label":"Tak, ktoś pomagał mi zrozumieć pytania","other":false}],"B":[{"label":"Rodzicem","other":false},{"label":"Opiekunem prawnym","other":false},{"label":"Innym członkiem rodziny","other":false},{"label":"Opiekunem lub asystentem (nie z rodziny)","other":false}]}},"26":{"n":26,"part":7,"text":{"A":null,"B":"Czy osoba, którą wspierasz, brała udział w wypełnianiu ankiety?"},"note":{"A":"Zaznacz jedną odpowiedź.","B":"Zaznacz jedną odpowiedź."},"optional":false,"only":"B","type":"single","options":{"A":[],"B":[{"label":"Nie, odpowiadałem / odpowiadałam sam / sama","other":false},{"label":"Tak, część odpowiedzi pochodzi od niej","other":false},{"label":"Tak, większość odpowiedzi pochodzi od niej","other":false}]}}},"start":{"title":"Ankieta: trudności na dworcach kolejowych i pomysły na zmiany","sections":[{"h":"Kto prowadzi badanie","p":["Michalina Chybicka, studentka kierunku transport (specjalność transport kolejowy) w Uczelni Techniczno-Handlowej im. Heleny Chodkowskiej w Warszawie. Opiekun naukowy: dr inż. Przemysław Ilczuk."]},{"h":"Po co jest ta ankieta","p":["Chcemy poznać trudności, jakie mają osoby w spektrum autyzmu na dworcach i stacjach kolejowych. Wyniki zostaną wykorzystane w pracy inżynierskiej. Na ich podstawie powstaną propozycje zmian, które mogą ułatwić korzystanie z dworców."]},{"h":"Kto może wypełnić ankietę","p":["Ankieta jest dla:","• osób w spektrum autyzmu, które mają 18 lat lub więcej (diagnoza nie jest wymagana),","• rodziców i opiekunów osób w spektrum autyzmu w każdym wieku. Jeśli wspierasz kilka osób, wybierz jedną (np. tę, która najczęściej podróżuje) i odpowiadaj tylko o niej.","Za chwilę wybierzesz, kim jesteś. Możesz wypełnić ankietę także wtedy, gdy nie korzystasz z kolei."]},{"h":"Ile to trwa","p":["Około 10–15 minut. Ankieta ma 25 pytań (dla rodziców i opiekunów 26) w 7 częściach.","Możesz robić przerwy. Odpowiedzi zapamiętują się w tej przeglądarce, więc możesz wrócić później na tym samym urządzeniu.","Osoba w spektrum może poprosić kogoś o pomoc w zapisywaniu odpowiedzi."]},{"h":"Zasady","p":["Udział jest dobrowolny. Możesz pominąć każde pytanie albo przerwać wypełnianie w dowolnym momencie.","Ankieta jest anonimowa. Nie podajesz imienia, nazwiska ani adresu. Nie wpisuj ich także w odpowiedziach.","Nie ma dobrych ani złych odpowiedzi. Liczy się Twoje doświadczenie.","Wyniki będą przedstawione tylko w formie zbiorczej, bez możliwości rozpoznania, kto co odpowiedział."]},{"h":"Jak zaznaczać odpowiedzi","p":["Kliknij lub dotknij odpowiedzi.","Przy każdym pytaniu jest napisane, czy zaznaczasz jedną odpowiedź, czy więcej.","Pytania oznaczone słowem „(nieobowiązkowe)” możesz pominąć."]},{"h":"Słowa użyte w ankiecie","p":["Dworzec lub stacja kolejowa: budynek, przejścia i perony, z których odjeżdżają pociągi.","Peron: miejsce, z którego wsiada się do pociągu.","Przeciążenie sensoryczne: stan, w którym dźwięków, światła, ludzi lub innych bodźców jest za dużo i trudno to wytrzymać."]},{"h":"Wysyłanie i kontakt","p":["Na końcu kliknij „Wyślij”. Jeśli zamkniesz stronę przed wysłaniem, odpowiedzi zostaną w tej przeglądarce i możesz do nich wrócić.","Ankieta działa na stronie badanie-dworce-autyzm.github.io/ankieta. Nie zbieramy imion, adresów e-mail ani adresów IP.","Pytania: michalina.chybicka@uth.pl"]}],"placeholders":[]},"consent":{"h":"Zgoda na udział","q":"Czy chcesz wypełnić ankietę?","yes":"Przeczytałem / przeczytałam informację o badaniu i chcę wypełnić ankietę","no":"Nie chcę wypełniać ankiety"},"who":{"h":"Kto wypełnia ankietę?","note":"Jeśli pasują do Ciebie dwie odpowiedzi, wybierz tę, z której perspektywy chcesz odpowiadać.","A":"Jestem osobą w spektrum autyzmu i mam co najmniej 18 lat","B":"Jestem rodzicem lub opiekunem osoby w spektrum autyzmu","other":"Jestem inną osobą (np. specjalistą, nauczycielem, terapeutą)"},"end":{"thanks":"Dziękujemy za wypełnienie ankiety!","thanks2":"Twoje odpowiedzi pomogą przygotować propozycje zmian na dworcach kolejowych.","other":"Dziękujemy. Ta ankieta jest tylko dla osób w spektrum autyzmu i ich rodziców lub opiekunów.","declined":"Dziękujemy. Nie musisz wypełniać ankiety. Możesz zamknąć tę stronę."},"ui":{"back":"Wstecz","next":"Dalej","send":"Wyślij","partOf":null,"intro":"Wprowadzenie","needOne":"Wybierz jedną odpowiedź, żeby przejść dalej.","optional":"(nieobowiązkowe)","pick":"— wybierz z listy —","taken":" (już wybrane)","otherPlaceholder":"Wpisz tutaj"},"msg":{"wykluczajaca":"Odznaczono pozostałe odpowiedzi, bo wybrano „{x}”.","zwykla":"Odznaczono „{x}”.","limit2":"Możesz zaznaczyć najwyżej 2 odpowiedzi. Jeśli chcesz wybrać inną, najpierw odznacz jedną z zaznaczonych.","zmianaWersji":"Uwaga: po zmianie tej odpowiedzi dotychczasowe odpowiedzi na pytania zostaną usunięte, bo pytania dla osoby w spektrum i dla opiekuna dotyczą innych osób.","wznow":{"h":"Masz niedokończoną ankietę","p":"Na tym urządzeniu są zapisane Twoje wcześniejsze odpowiedzi. Możesz wrócić do miejsca, w którym skończyłeś / skończyłaś, albo zacząć od nowa.","dalej":"Wróć do ankiety","nowa":"Zacznij od nowa","nowaUwaga":"„Zacznij od nowa” usuwa zapisane odpowiedzi z tego urządzenia."},"wysylanie":"Wysyłanie odpowiedzi…","blad":"Nie udało się wysłać odpowiedzi. Sprawdź połączenie z internetem i spróbuj ponownie. Twoje odpowiedzi są zapisane na tym urządzeniu i nie zginą.","ponow":"Spróbuj wysłać ponownie","test":"Tryb testowy: strona nie jest jeszcze połączona z arkuszem, więc odpowiedzi nie zostały wysłane. Poniżej wiersz, który trafiłby do arkusza.","pilot":"Pilotaż ankiety","brakPamieci":"Ta przeglądarka nie pozwala zapamiętać odpowiedzi. Ankietę trzeba wypełnić za jednym razem."},"nParts":7,"wersjaTresci":"9e11efba"};
+</script>
+<script>
+// Kodowanie odpowiedzi (wg „Ankieta_opis_i_mapa_pytan.docx”, rozdz. 4) i lista kolumn arkusza.
+// TEN SAM plik jest używany przez stronę (wklejony do index.html) i przez build_online.js (słownik kolumn),
+// dzięki czemu słownik zawsze zgadza się z tym, co strona wysyła.
+(function (root) {
+  "use strict";
+
+  const META_POCZATEK = ["id", "data_czas", "wersja", "zrodlo", "pilot"];
+  const META_KONIEC = ["czas_min", "wersja_tresci"];
+  const AB = ["A", "B"];
+
+  function typDla(q, v) { return q.type && typeof q.type === "object" ? q.type[v] : q.type; }
+  function opcjeDla(q, v) { return q.options ? q.options[v] : []; }
+  function rozneTypy(q) { return q.type && typeof q.type === "object"; }
+
+  // Kolejność pytań widocznych dla danej wersji i odpowiedzi (rozgałęzienia ze specyfikacji).
+  function widoczne(D, wersja, odp) {
+    const lista = [];
+    for (const p of D.parts) for (const n of p.questions) {
+      const q = D.questions[n];
+      if (q.only && q.only !== wersja) continue;
+      if (n === 5 && ![2, 3, 4, 5].includes(odp.q4)) continue;   // pyt. 4 → 5 tylko przy Rzadko/Czasami/Często/Bardzo często
+      if (n === 18 && odp.q17 !== 1) continue;                   // pyt. 17 → 18 tylko przy „Tak”
+      lista.push(n);
+    }
+    return lista;
+  }
+
+  // Opis kolumn: [{kolumna, n, wersja, typ, ...}] w kolejności arkusza.
+  function kolumny(D) {
+    const out = META_POCZATEK.map((k) => ({ kolumna: k, meta: true }));
+    for (const p of D.parts) for (const n of p.questions) {
+      const q = D.questions[n];
+      const wersje = q.only ? [q.only] : AB;
+      const grupy = rozneTypy(q) ? wersje.map((v) => ({ v, suf: v })) : [{ v: wersje.length === 1 ? wersje[0] : null, suf: "" }];
+      for (const g of grupy) {
+        const typ = typDla(q, g.v || "A");
+        const pre = "q" + n + g.suf;
+        if (typ === "single" || typ === "text") out.push({ kolumna: pre, n, wersja: g.v, typ });
+        else if (typ === "multi") {
+          const ile = Math.max(...(g.v ? [g.v] : AB).map((v) => opcjeDla(q, v).length));
+          for (let k = 1; k <= ile; k++) out.push({ kolumna: pre + "_" + k, n, wersja: g.v, typ, opcja: k });
+          if ((g.v ? [g.v] : AB).some((v) => opcjeDla(q, v).some((o) => o.other))) out.push({ kolumna: pre + "_inne", n, wersja: g.v, typ: "inne" });
+        } else if (typ === "matrix") {
+          q.rows.forEach((r, i) => out.push({ kolumna: pre + "_" + (r.letter || i + 1), n, wersja: g.v, typ, wiersz: i }));
+        } else if (typ === "ranking") {
+          q.slots.forEach((s, i) => out.push({ kolumna: pre + "_" + (i + 1), n, wersja: g.v, typ, miejsce: i }));
+        }
+      }
+    }
+    META_KONIEC.forEach((k) => out.push({ kolumna: k, meta: true }));
+    return out;
+  }
+
+  // Jeden wiersz arkusza z odpowiedzi. Brak odpowiedzi = "" (puste pole).
+  function koduj(D, stan) {
+    const v = stan.wersja, odp = stan.odp || {};
+    const wid = new Set(widoczne(D, v, odp));
+    const row = {};
+    for (const c of kolumny(D)) row[c.kolumna] = "";
+    row.id = stan.id || "";
+    row.wersja = v;
+    row.zrodlo = "online";
+    row.pilot = stan.pilot ? 1 : 0;
+    row.wersja_tresci = D.wersjaTresci || "";
+    if (typeof stan.start === "number" && typeof stan.koniec === "number" && stan.koniec >= stan.start) row.czas_min = Math.max(0, Math.round((stan.koniec - stan.start) / 6000) / 10);
+
+    for (const c of kolumny(D)) {
+      if (c.meta || !c.n || !wid.has(c.n)) continue;
+      if (c.wersja && c.wersja !== v) continue;
+      const q = D.questions[c.n], k = "q" + c.n;
+      if (c.typ === "single") { const x = odp[k]; if (Number.isInteger(x)) row[c.kolumna] = x; }
+      else if (c.typ === "text") { const x = (odp[k] || "").trim(); if (x) row[c.kolumna] = x.slice(0, 2000); }
+      else if (c.typ === "multi") {
+        const zazn = Array.isArray(odp[k]) ? odp[k] : [];
+        if (zazn.length && c.opcja <= opcjeDla(q, v).length) row[c.kolumna] = zazn.includes(c.opcja) ? 1 : 0;
+      }
+      else if (c.typ === "inne") {
+        const zazn = Array.isArray(odp[k]) ? odp[k] : [];
+        const idx = opcjeDla(q, v).findIndex((o) => o.other) + 1;
+        const t = (odp[k + "_inne"] || "").trim();
+        if (idx && zazn.includes(idx) && t) row[c.kolumna] = t.slice(0, 500);
+      }
+      else if (c.typ === "matrix") { const x = odp[k + "_" + (c.wiersz + 1)]; if ([1, 2, 3, 4, 5, 9].includes(x)) row[c.kolumna] = x; }
+      else if (c.typ === "ranking") { const x = odp[k + "_" + (c.miejsce + 1)]; if (x) row[c.kolumna] = x; }
+    }
+    return row;
+  }
+
+  const api = { kolumny, koduj, widoczne, typDla };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  else root.Kodowanie = api;
+})(this);
+
+</script>
+<script>
+// Ankieta online – logika strony. Dane (D) i SKRYPT_URL wstawia build_online.js. Kodowanie: kodowanie.js.
+(function () {
+  "use strict";
+  const K_STAN = "ankieta_dworce_stan_v1";
+  const K_WYSYLKA = "ankieta_dworce_do_wyslania_v1";
+  const $ = (s) => document.querySelector(s);
+  const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const tpl = (s, x) => s.replace("{x}", x);
+
+  // ---------- pamięć przeglądarki (może nie działać – wtedy ankieta działa bez niej) ----------
+  const pamiec = {
+    ok: (() => { try { localStorage.setItem("_t", "1"); localStorage.removeItem("_t"); return true; } catch (e) { return false; } })(),
+    get(k) { try { const x = localStorage.getItem(k); return x ? JSON.parse(x) : null; } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* brak miejsca lub tryb prywatny */ } },
+    del(k) { try { localStorage.removeItem(k); } catch (e) { } },
+  };
+
+  function noweId() {
+    const a = new Uint8Array(8);
+    (window.crypto || window.msCrypto).getRandomValues(a);
+    return Array.from(a, (b) => b.toString(16).padStart(2, "0")).join("");
+  }
+  function pilotZAdresu() {
+    try { return new URLSearchParams(location.search).get("pilot") === "1" || location.hash === "#pilot"; } catch (e) { return false; }
+  }
+  function nowyStan() {
+    return { v: 1, id: noweId(), pilot: pilotZAdresu(), wersja: null, odp: {}, ekran: "start", historia: [], start: null, koniec: null };
+  }
+
+  let S = nowyStan();
+  let UI = { komunikat: null, uwagaKto: false, test: null };
+  const zapisz = () => { if (!["koniec", "wysylanie"].includes(S.ekran)) pamiec.set(K_STAN, S); };
+  const v = (o) => (o && typeof o === "object" && !Array.isArray(o) ? o[S.wersja || "A"] : o);
+
+  // ---------- nagłówek: „Część X z 7” i pasek postępu ----------
+  function naglowek() {
+    let nr = D.ui.intro, tyt = "", proc = 0;
+    if (typeof S.ekran === "number") {
+      const q = D.questions[S.ekran], p = D.parts[q.part - 1];
+      const lista = Kodowanie.widoczne(D, S.wersja, S.odp);
+      nr = "Część " + q.part + " z " + D.nParts;
+      tyt = v(p.title).replace(/^Część \d+\.\s*/, "");
+      proc = Math.round(((lista.indexOf(S.ekran) + 1) / (lista.length + 1)) * 100);
+    } else if (["koniec", "wysylanie", "blad"].includes(S.ekran)) { nr = "Koniec"; proc = 100; }
+    $("#czescNr").textContent = nr;
+    $("#czescTytul").textContent = tyt;
+    $("#pasekW").style.width = proc + "%";
+    const pb = $("#pasek");
+    pb.setAttribute("aria-valuenow", proc);
+    pb.setAttribute("aria-valuetext", nr + (tyt ? ", " + tyt : "") + ". Postęp " + proc + "%.");
+    $("#pilot").hidden = !S.pilot;
+  }
+
+  // ---------- elementy odpowiedzi ----------
+  function opcje(name, lista, typ, wartosc) {
+    return '<fieldset class="odp" aria-labelledby="tytul"><legend class="sr">Odpowiedzi</legend>' + lista.map((o, i) => {
+      const id = name + "_" + (i + 1);
+      const zazn = typ === "radio" ? wartosc === i + 1 : (wartosc || []).includes(i + 1);
+      let h = '<label class="opcja" for="' + id + '"><input type="' + typ + '" id="' + id + '" name="' + name + '" value="' + (i + 1) + '"' +
+        (o.excl ? ' data-excl="1"' : "") + (zazn ? " checked" : "") + "><span>" + esc(o.label) + "</span></label>";
+      if (o.other) h += '<div class="inne"><label class="sr" for="' + id + '_t">' + esc(o.label) + ": wpisz</label>" +
+        '<input type="text" id="' + id + '_t" data-inne="' + name + '" data-opcja="' + (i + 1) + '" maxlength="500" autocomplete="off" placeholder="' +
+        esc(D.ui.otherPlaceholder) + '" value="' + esc(S.odp[name + "_inne"] || "") + '"></div>';
+      return h;
+    }).join("") + "</fieldset>";
+  }
+
+  function ekranPytania(n) {
+    const q = D.questions[n], p = D.parts[q.part - 1];
+    const lista = Kodowanie.widoczne(D, S.wersja, S.odp);
+    const pierwszeWCzesci = lista.find((x) => D.questions[x].part === q.part) === n;
+    let h = "";
+    if (pierwszeWCzesci && v(p.intro)) h += '<div class="wstep"><p>' + esc(v(p.intro)) + "</p></div>";
+    h += '<h1 id="tytul" tabindex="-1"><span class="nr">Pytanie ' + n + "</span>" + esc(v(q.text)) +
+      (q.optional ? ' <span class="nr" style="display:inline">' + esc(D.ui.optional) + "</span>" : "") + "</h1>";
+    if (v(q.note)) h += '<p class="opis" id="opis">' + esc(v(q.note)) + "</p>";
+    const typ = v(q.type);
+    if (typ === "single") h += opcje("q" + n, v(q.options), "radio", S.odp["q" + n]);
+    if (typ === "multi") h += opcje("q" + n, v(q.options), "checkbox", S.odp["q" + n]);
+    if (typ === "matrix") {
+      h += '<p class="legenda">' + esc(v(q.scale.legend)) + "</p>";
+      q.rows.forEach((r, i) => {
+        const name = "q" + n + "_" + (i + 1), val = S.odp[name];
+        h += '<div class="karta"><fieldset><legend>' + (r.letter ? '<span class="lit">' + r.letter + ")</span>" : "") + esc(r.label) + '</legend><div class="skala">';
+        q.scale.heads.forEach((hd, k) => {
+          const kod = k < 5 ? k + 1 : 9, id = name + "_" + kod, nw = k === 5;
+          const tekst = nw ? "<span>" + esc(hd.join(" ")) + "</span>" : '<span class="cyf">' + hd[0] + '</span><span class="slowo">' + esc(hd[1]) + "</span>";
+          h += '<label for="' + id + '"' + (nw ? ' class="nw"' : "") + '><input type="radio" id="' + id + '" name="' + name + '" value="' + kod + '"' + (val === kod ? " checked" : "") + ">" + tekst + "</label>";
+        });
+        h += "</div></fieldset></div>";
+      });
+    }
+    if (typ === "ranking") {
+      const src = D.questions[q.from];
+      h += '<div class="ranking">';
+      q.slots.forEach((s, i) => {
+        const name = "q" + n + "_" + (i + 1), val = S.odp[name] || "";
+        h += '<label for="' + name + '">' + esc(s) + '</label><select id="' + name + '" name="' + name + '" data-rank="1"><option value="">' + esc(D.ui.pick) + "</option>" +
+          src.rows.map((r) => '<option value="' + r.letter + '"' + (val === r.letter ? " selected" : "") + ">" + r.letter + ") " + esc(r.label) + "</option>").join("") + "</select>";
+      });
+      h += "</div>";
+    }
+    if (typ === "text") {
+      const val = S.odp["q" + n] || "";
+      h += '<div class="pole"><label class="sr" for="q' + n + '">Twoja odpowiedź</label><textarea id="q' + n + '" name="q' + n + '" maxlength="2000" aria-describedby="' + (v(q.note) ? "opis " : "") + "licz" + n + '">' + esc(val) + "</textarea>" +
+        '<div class="licznik" id="licz' + n + '">' + val.length + " / 2000 znaków</div></div>";
+    }
+    return h;
+  }
+
+  function ekranStartowy() {
+    let h = '<h1 id="tytul" tabindex="-1">' + esc(D.start.title) + "</h1>";
+    if (!pamiec.ok) h += '<p class="uwaga">' + esc(D.msg.brakPamieci) + "</p>";
+    D.start.sections.forEach((s) => {
+      h += "<h2>" + esc(s.h) + "</h2>" + s.p.map((x) => {
+        let t = esc(x);
+        for (const ph of D.start.placeholders) t = t.split(esc(ph)).join('<span class="do-uzup">' + esc(ph) + "</span>");
+        return "<p>" + t + "</p>";
+      }).join("");
+    });
+    return h;
+  }
+
+  function ekranKonca() {
+    if (S.ekran === "wysylanie") return '<div class="koniec"><h1 id="tytul" tabindex="-1">' + esc(D.msg.wysylanie) + "</h1></div>";
+    if (S.ekran === "blad") return '<div class="koniec"><h1 id="tytul" tabindex="-1">' + esc(D.msg.blad) + '</h1><div class="przyciski"><button type="button" class="btn btn-glowny" data-akcja="ponow">' + esc(D.msg.ponow) + "</button></div></div>";
+    const t = S.powod === "inna" ? [D.end.other] : S.powod === "nie" ? [D.end.declined] : [D.end.thanks, D.end.thanks2];
+    let h = '<div class="koniec"><h1 id="tytul" tabindex="-1">' + esc(t[0]) + "</h1>" + (t[1] ? "<p>" + esc(t[1]) + "</p>" : "") + "</div>";
+    if (UI.test) {
+      h += '<p class="uwaga">' + esc(D.msg.test) + '</p><table class="wiersz"><tbody>' +
+        Object.entries(UI.test).map(([k, x]) => "<tr><th>" + esc(k) + "</th><td>" + esc(x) + "</td></tr>").join("") + "</tbody></table>" +
+        '<div class="przyciski"><button type="button" class="btn btn-drugi" data-akcja="nowa">' + esc(D.msg.wznow.nowa) + "</button></div>";
+    }
+    return h;
+  }
+
+  function ekranWznowienia() {
+    const w = D.msg.wznow;
+    return '<h1 id="tytul" tabindex="-1">' + esc(w.h) + "</h1><p>" + esc(w.p) + '</p><div class="przyciski">' +
+      '<button type="button" class="btn btn-glowny" data-akcja="wznow">' + esc(w.dalej) + "</button>" +
+      '<button type="button" class="btn btn-drugi" data-akcja="nowa">' + esc(w.nowa) + '</button></div><p class="opis" style="margin-top:.75rem">' + esc(w.nowaUwaga) + "</p>";
+  }
+
+  // ---------- rysowanie ekranu ----------
+  function rysuj(fokus = true) {
+    naglowek();
+    let h = "";
+    const e = S.ekran;
+    if (e === "start") h = ekranStartowy();
+    else if (e === "wznow") h = ekranWznowienia();
+    else if (e === "zgoda") h = '<h1 id="tytul" tabindex="-1"><span class="nr">' + esc(D.consent.h) + "</span>" + esc(D.consent.q) + '</h1><p class="opis">Zaznacz jedną odpowiedź.</p>' +
+      opcje("zgoda", [{ label: D.consent.yes }, { label: D.consent.no }], "radio", S.odp.zgoda);
+    else if (e === "kto") h = '<h1 id="tytul" tabindex="-1">' + esc(D.who.h) + '</h1><p class="opis">' + esc(D.who.note) + "</p>" +
+      opcje("kto", [{ label: D.who.A }, { label: D.who.B }, { label: D.who.other }], "radio", S.odp.kto) +
+      '<div id="uwagaKto">' + (UI.uwagaKto ? '<p class="uwaga">' + esc(D.msg.zmianaWersji) + "</p>" : "") + "</div>";
+    else if (typeof e === "number") h = ekranPytania(e);
+    else h = ekranKonca();
+    h += '<div id="status" role="status" aria-live="polite">' + (UI.komunikat ? '<p class="info">' + esc(UI.komunikat) + "</p>" : "") + "</div>";
+    h += '<div id="alarm" role="alert"></div>';
+    $("#ekran").innerHTML = h;
+
+    const bezNawigacji = ["koniec", "wysylanie", "wznow"].includes(e);
+    $("#wstecz").classList.toggle("ukryty", bezNawigacji || S.historia.length === 0);
+    $("#dalej").classList.toggle("ukryty", bezNawigacji || e === "blad");
+    $("#dalej").textContent = czyOstatnie() ? D.ui.send : D.ui.next;
+    blokujPowtorzenia();
+    if (fokus) { window.scrollTo(0, 0); const t = $("#tytul"); if (t) t.focus({ preventScroll: true }); }
+  }
+
+  function czyOstatnie() {
+    if (typeof S.ekran !== "number") return false;
+    const l = Kodowanie.widoczne(D, S.wersja, S.odp);
+    return l[l.length - 1] === S.ekran;
+  }
+
+  function blokujPowtorzenia() {
+    const sel = [...document.querySelectorAll("select[data-rank]")];
+    sel.forEach((s) => {
+      const zajete = sel.filter((x) => x !== s).map((x) => x.value).filter(Boolean);
+      [...s.options].forEach((o) => {
+        if (!o.value) return;
+        const z = zajete.includes(o.value);
+        o.disabled = z;
+        const baza = o.textContent.replace(D.ui.taken, "");
+        o.textContent = z ? baza + D.ui.taken : baza;
+      });
+    });
+  }
+
+  function komunikat(t) {
+    UI.komunikat = t;
+    const st = $("#status");
+    if (!st) return;
+    st.innerHTML = t ? '<p class="info">' + esc(t) + "</p>" : "";
+    if (t) {   // pokaż komunikat nad paskiem z przyciskami, jeśli jest pod nim
+      const r = st.getBoundingClientRect(), dol = $("nav.nawig").getBoundingClientRect().top;
+      if (r.bottom > dol) window.scrollBy(0, r.bottom - dol + 12);
+    }
+  }
+
+  // ---------- zmiany odpowiedzi ----------
+  function zmienCheckbox(t) {
+    const name = t.name, wszystkie = [...document.querySelectorAll('input[name="' + name + '"]')];
+    const q = D.questions[Number(name.slice(1))];
+    let info = null;
+    if (t.checked) {
+      if (t.dataset.excl) {
+        const inne = wszystkie.filter((x) => x !== t && x.checked);
+        inne.forEach((x) => (x.checked = false));
+        if (inne.length) info = tpl(D.msg.wykluczajaca, t.parentElement.textContent.trim());
+      } else {
+        const ex = wszystkie.filter((x) => x.dataset.excl && x.checked);
+        ex.forEach((x) => (x.checked = false));
+        if (ex.length) info = tpl(D.msg.zwykla, ex[0].parentElement.textContent.trim());
+        if (q && q.max && wszystkie.filter((x) => x.checked).length > q.max) { t.checked = false; info = D.msg.limit2; }
+      }
+    }
+    S.odp[name] = wszystkie.filter((x) => x.checked).map((x) => Number(x.value));
+    if (!S.odp[name].length) delete S.odp[name];
+    komunikat(info);
+  }
+
+  document.addEventListener("change", (ev) => {
+    const t = ev.target;
+    $("#alarm") && ($("#alarm").innerHTML = "");
+    if (t.matches("input[type=radio]")) {
+      S.odp[t.name] = Number(t.value);
+      if (t.name === "kto") {
+        const nowa = S.odp.kto === 1 ? "A" : S.odp.kto === 2 ? "B" : null;
+        const sa = Object.keys(S.odp).some((k) => /^q\d/.test(k));
+        const pokaz = !!(S.wersja && nowa !== S.wersja && sa);
+        UI.uwagaKto = pokaz;
+        $("#uwagaKto").innerHTML = pokaz ? '<p class="uwaga">' + esc(D.msg.zmianaWersji) + "</p>" : "";
+      }
+    } else if (t.matches("input[type=checkbox]")) zmienCheckbox(t);
+    else if (t.matches("select[data-rank]")) { if (t.value) S.odp[t.name] = t.value; else delete S.odp[t.name]; blokujPowtorzenia(); }
+    zapisz();
+  });
+
+  document.addEventListener("input", (ev) => {
+    const t = ev.target;
+    if (t.dataset.inne) {
+      S.odp[t.dataset.inne + "_inne"] = t.value;
+      const box = document.getElementById(t.dataset.inne + "_" + t.dataset.opcja);
+      if (t.value.trim() && box && !box.checked) { box.checked = true; zmienCheckbox(box); }
+    }
+    if (t.tagName === "TEXTAREA") {
+      S.odp[t.name] = t.value;
+      const l = document.getElementById("licz" + t.name.slice(1));
+      if (l) l.textContent = t.value.length + " / 2000 znaków";
+    }
+    zapisz();
+  });
+
+  // ---------- nawigacja ----------
+  function wymagaj(pole) {
+    if (S.odp[pole]) return true;
+    $("#alarm").innerHTML = '<p class="komunikat">' + esc(D.ui.needOne) + "</p>";
+    return false;
+  }
+
+  function idz(ekran) {
+    S.historia.push(S.ekran);
+    S.ekran = ekran;
+    UI.komunikat = null;
+    zapisz();
+    rysuj();
+  }
+
+  function zakoncz(powod) {
+    S.powod = powod; S.ekran = "koniec"; UI.komunikat = null;
+    pamiec.del(K_STAN);
+    rysuj();
+  }
+
+  $("#dalej").addEventListener("click", () => {
+    const e = S.ekran;
+    if (e === "start") return idz("zgoda");
+    if (e === "zgoda") { if (!wymagaj("zgoda")) return; return S.odp.zgoda === 2 ? zakoncz("nie") : idz("kto"); }
+    if (e === "kto") {
+      if (!wymagaj("kto")) return;
+      if (S.odp.kto === 3) return zakoncz("inna");
+      const nowa = S.odp.kto === 1 ? "A" : "B";
+      if (S.wersja && S.wersja !== nowa) for (const k of Object.keys(S.odp)) if (/^q\d/.test(k)) delete S.odp[k];
+      S.wersja = nowa; UI.uwagaKto = false;
+      if (!S.start) S.start = Date.now();
+      return idz(Kodowanie.widoczne(D, S.wersja, S.odp)[0]);
+    }
+    if (typeof e === "number") {
+      const l = Kodowanie.widoczne(D, S.wersja, S.odp);
+      const i = l.indexOf(e);
+      if (i < l.length - 1) return idz(l[i + 1]);
+      return wyslij();
+    }
+  });
+
+  $("#wstecz").addEventListener("click", () => {
+    if (!S.historia.length) return;
+    let cel = S.historia.pop();
+    // jeśli pytanie z historii zniknęło po zmianie odpowiedzi (rozgałęzienie), cofamy się dalej
+    while (typeof cel === "number" && !Kodowanie.widoczne(D, S.wersja, S.odp).includes(cel) && S.historia.length) cel = S.historia.pop();
+    S.ekran = cel; UI.komunikat = null; UI.uwagaKto = false;
+    zapisz(); rysuj();
+  });
+
+  document.addEventListener("click", (ev) => {
+    const a = ev.target.closest("[data-akcja]");
+    if (!a) return;
+    const akcja = a.dataset.akcja;
+    if (akcja === "wznow") { S = pamiec.get(K_STAN) || nowyStan(); rysuj(); }
+    if (akcja === "nowa") { pamiec.del(K_STAN); pamiec.del(K_WYSYLKA); S = nowyStan(); UI = { komunikat: null, uwagaKto: false, test: null }; rysuj(); }
+    if (akcja === "ponow") wyslijWiersz(pamiec.get(K_WYSYLKA) || Kodowanie.koduj(D, S));
+  });
+
+  // ---------- wysyłka ----------
+  function wyslij() {
+    S.koniec = Date.now();
+    const wiersz = Kodowanie.koduj(D, S);
+    if ($("#hp_www").value) { zakoncz("ok"); return; }          // pole-pułapka wypełnione: prawdopodobnie robot
+    S.historia.push(S.ekran);
+    S.ekran = "blad";                                            // gdyby strona się zamknęła w trakcie: po powrocie ekran „ponów”
+    pamiec.set(K_STAN, S);
+    pamiec.set(K_WYSYLKA, wiersz);                               // odpowiedzi czekają na potwierdzenie zapisu
+    if (!SKRYPT_URL) { UI.test = wiersz; pamiec.del(K_WYSYLKA); zakoncz("ok"); return; }
+    wyslijWiersz(wiersz);
+  }
+
+  async function wyslijWiersz(wiersz) {
+    S.ekran = "wysylanie"; rysuj();
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 20000);
+    try {
+      // text/plain: bez zapytania wstępnego CORS; Apps Script odpowiada JSON-em {ok:true,id}
+      const r = await fetch(SKRYPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ wiersz }), signal: ctrl.signal });
+      const j = await r.json();
+      if (!j || j.ok !== true || j.id !== wiersz.id) throw new Error("brak potwierdzenia");
+      pamiec.del(K_WYSYLKA);
+      zakoncz("ok");
+    } catch (err) {
+      S.ekran = "blad"; pamiec.set(K_STAN, S); rysuj();
+    } finally { clearTimeout(timer); }
+  }
+
+  // ---------- start ----------
+  const czeka = pamiec.get(K_WYSYLKA);
+  const zapisany = pamiec.get(K_STAN);
+  if (czeka && zapisany) { S = zapisany; S.ekran = "blad"; S.historia = S.historia || []; }
+  else if (zapisany && zapisany.v === 1 && zapisany.historia && zapisany.historia.length) { S = nowyStan(); S.ekran = "wznow"; }
+  if (pilotZAdresu()) S.pilot = true;
+  rysuj(false);
+})();
+
+</script>
+</body>
+</html>
