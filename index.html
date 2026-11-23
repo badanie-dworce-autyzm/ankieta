@@ -128,7 +128,7 @@ const D = {"parts":[{"no":1,"title":{"A":"Część 1. Podróże koleją","B":"Cz
   "use strict";
 
   const META_POCZATEK = ["id", "data_czas", "wersja", "zrodlo", "pilot"];
-  const META_KONIEC = ["czas_min", "wersja_tresci"];
+  const META_KONIEC = ["czas_min", "wersja_tresci", "skad"];
   const AB = ["A", "B"];
 
   function typDla(q, v) { return q.type && typeof q.type === "object" ? q.type[v] : q.type; }
@@ -185,6 +185,7 @@ const D = {"parts":[{"no":1,"title":{"A":"Część 1. Podróże koleją","B":"Cz
     row.zrodlo = "online";
     row.pilot = stan.pilot ? 1 : 0;
     row.wersja_tresci = D.wersjaTresci || "";
+    row.skad = /^[a-z0-9-]{1,20}$/.test(stan.skad || "") ? stan.skad : "";
     if (typeof stan.start === "number" && typeof stan.koniec === "number" && stan.koniec >= stan.start) row.czas_min = Math.max(0, Math.round((stan.koniec - stan.start) / 6000) / 10);
 
     for (const c of kolumny(D)) {
@@ -241,8 +242,29 @@ const D = {"parts":[{"no":1,"title":{"A":"Część 1. Podróże koleją","B":"Cz
   function pilotZAdresu() {
     try { return new URLSearchParams(location.search).get("pilot") === "1" || location.hash === "#pilot"; } catch (e) { return false; }
   }
+  // Skąd przyszła osoba wypełniająca: ?skad=strona, ?skad=linkedin itp. (tylko małe litery, cyfry i „-”).
+  function skadZAdresu() {
+    try { const x = (new URLSearchParams(location.search).get("skad") || "").toLowerCase(); return /^[a-z0-9-]{1,20}$/.test(x) ? x : ""; } catch (e) { return ""; }
+  }
   function nowyStan() {
-    return { v: 1, id: noweId(), pilot: pilotZAdresu(), wersja: null, odp: {}, ekran: "start", historia: [], start: null, koniec: null };
+    return { v: 1, id: noweId(), pilot: pilotZAdresu(), skad: skadZAdresu(), wersja: null, odp: {}, ekran: "start", historia: [], start: null, koniec: null };
+  }
+
+  // Polska typografia: jednoliterowe słowa (a, i, o, u, w, z) nie zostają na końcu wiersza.
+  // Zmienia tylko wyświetlanie (twarda spacja), nie treść pytań ani zapisywane dane.
+  const SIEROTA = /(^|[\s\u00a0(„"])([aiouwzAIOUWZ]) (?=\S)/g;
+  function bezSierot(el) {
+    if (!el || !document.createTreeWalker) return;
+    const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+    const wezly = [];
+    while (w.nextNode()) wezly.push(w.currentNode);
+    for (const t of wezly) {
+      const rodzic = t.parentNode && t.parentNode.nodeName;
+      if (rodzic === "OPTION" || rodzic === "TEXTAREA" || rodzic === "SCRIPT" || rodzic === "STYLE") continue;
+      let x = t.nodeValue, y;
+      while ((y = x.replace(SIEROTA, "$1$2\u00a0")) !== x) x = y;
+      if (x !== t.nodeValue) t.nodeValue = x;
+    }
   }
 
   let S = nowyStan();
@@ -262,6 +284,7 @@ const D = {"parts":[{"no":1,"title":{"A":"Część 1. Podróże koleją","B":"Cz
     } else if (["koniec", "wysylanie", "blad"].includes(S.ekran)) { nr = "Koniec"; proc = 100; }
     $("#czescNr").textContent = nr;
     $("#czescTytul").textContent = tyt;
+    bezSierot($("#czescTytul"));
     $("#pasekW").style.width = proc + "%";
     const pb = $("#pasek");
     pb.setAttribute("aria-valuenow", proc);
@@ -376,6 +399,7 @@ const D = {"parts":[{"no":1,"title":{"A":"Część 1. Podróże koleją","B":"Cz
     h += '<div id="status" role="status" aria-live="polite">' + (UI.komunikat ? '<p class="info">' + esc(UI.komunikat) + "</p>" : "") + "</div>";
     h += '<div id="alarm" role="alert"></div>';
     $("#ekran").innerHTML = h;
+    bezSierot($("#ekran"));
 
     const bezNawigacji = ["koniec", "wysylanie", "wznow"].includes(e);
     $("#wstecz").classList.toggle("ukryty", bezNawigacji || S.historia.length === 0);
@@ -565,6 +589,7 @@ const D = {"parts":[{"no":1,"title":{"A":"Część 1. Podróże koleją","B":"Cz
   if (czeka && zapisany) { S = zapisany; S.ekran = "blad"; S.historia = S.historia || []; }
   else if (zapisany && zapisany.v === 1 && zapisany.historia && zapisany.historia.length) { S = nowyStan(); S.ekran = "wznow"; }
   if (pilotZAdresu()) S.pilot = true;
+  if (!S.skad && skadZAdresu()) S.skad = skadZAdresu();
   rysuj(false);
 })();
 
